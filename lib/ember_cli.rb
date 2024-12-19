@@ -53,7 +53,11 @@ module EmberCli
   end
 
   def root
-    @root ||= Rails.root.join("tmp", "ember-cli").tap(&:mkpath)
+    @root ||= if ENV["EMBER_CLI_ROOT"].present?
+      Pathname.new(ENV["EMBER_CLI_ROOT"])
+    else
+      Rails.root.join("tmp", "ember-cli")
+    end.tap(&:mkpath)
   end
 
   def env
