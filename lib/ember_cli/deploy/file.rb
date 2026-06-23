@@ -13,7 +13,7 @@ module EmberCli
       end
 
       def to_rack
-        Rack::Files.new(app.dist_path.to_s, rack_headers)
+        Rack::Files.new(app.dist_path.to_s, headers: rack_headers)
       end
 
       def index_html
@@ -33,15 +33,8 @@ module EmberCli
 
         if config.respond_to?(:public_file_server) &&
             config.public_file_server && config.public_file_server.headers
-          # Rails 5.
           config.public_file_server.headers
-        elsif config.respond_to?(:static_cache_control)
-          # Rails 4.2 and below.
-          {
-            "Cache-Control" => Rails.configuration.static_cache_control,
-          }
         else
-          # No specification.
           {}
         end
       end
