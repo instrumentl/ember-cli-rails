@@ -13,7 +13,13 @@ module EmberCli
       end
 
       def to_rack
-        Rack::Files.new(app.dist_path.to_s, headers: rack_headers)
+        headers = rack_headers
+        files = Rack::Files.new(app.dist_path.to_s)
+
+        ->(env) {
+          status, response_headers, body = files.call(env)
+          [status, response_headers.merge(headers), body]
+        }
       end
 
       def index_html
@@ -33,7 +39,7 @@ module EmberCli
 
         if config.respond_to?(:public_file_server) &&
             config.public_file_server && config.public_file_server.headers
-          config.public_file_server.headers
+          config.public_file_server.headers.transform_keys(&:downcase)
         else
           {}
         end
