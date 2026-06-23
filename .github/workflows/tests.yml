@@ -44,11 +44,6 @@ jobs:
         path: "vendor/bundle"
         key: bundle-${{ hashFiles('Gemfile.lock') }}
 
-    - name: "Install Webdriver"
-      run: |
-        sudo apt-get update
-        sudo apt-get -yqq install chromium-browser
-
     - name: "Run Setup"
       run: |
         bin/setup
