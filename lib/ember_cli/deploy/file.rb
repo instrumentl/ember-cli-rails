@@ -1,8 +1,11 @@
-require "rack"
-require "ember_cli/errors"
+# frozen_string_literal: true
+
+require 'rack'
+require 'ember_cli/errors'
 
 module EmberCli
   module Deploy
+    # Serves an EmberCLI application from the filesystem via Rack.
     class File
       def initialize(app)
         @app = app
@@ -16,7 +19,7 @@ module EmberCli
         headers = rack_headers
         files = Rack::Files.new(app.dist_path.to_s)
 
-        ->(env) {
+        lambda { |env|
           status, response_headers, body = files.call(env)
           [status, response_headers.merge(headers), body]
         }
@@ -38,7 +41,7 @@ module EmberCli
         config = Rails.configuration
 
         if config.respond_to?(:public_file_server) &&
-            config.public_file_server && config.public_file_server.headers
+           config.public_file_server&.headers
           config.public_file_server.headers.transform_keys(&:downcase)
         else
           {}
@@ -48,13 +51,13 @@ module EmberCli
       def check_for_error_and_raise!
         app.check_for_errors!
 
-        raise BuildError.new <<-MSG
+        raise BuildError, <<-MSG
           EmberCLI failed to generate an `index.html` file.
         MSG
       end
 
       def index_file
-        app.dist_path.join("index.html")
+        app.dist_path.join('index.html')
       end
     end
   end
