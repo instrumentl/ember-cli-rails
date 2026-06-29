@@ -108,7 +108,7 @@ describe EmberCli::Deploy::File do
   end
 
   def stub_public_file_server_headers(headers)
-    expect(Rails.configuration).to receive(:public_file_server).and_return(
+    expect(Rails.configuration).to receive(:public_file_server).twice.and_return(
       double(headers: headers)
     )
   end
