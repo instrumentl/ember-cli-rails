@@ -13,23 +13,20 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: ["2.5", "2.6", "2.7", "3.0"]
-        rails: ["5.2", "6.0"]
-        exclude:
-          - ruby: "3.0"
-            rails: "5.2"
+        ruby: ["3.3", "3.4"]
+        rails: ["7.2", "8.0", "8.1"]
 
     env:
       RAILS_ENV: "test"
       RAILS_VERSION: "${{ matrix.rails }}"
 
     steps:
-    - uses: "actions/checkout@v1"
+    - uses: "actions/checkout@v4"
 
-    - name: "Install NodeJS 12.x"
-      uses: "actions/setup-node@v1"
+    - name: "Install NodeJS 22.x"
+      uses: "actions/setup-node@v5"
       with:
-        node-version: "12.x"
+        node-version: "22.x"
 
     - name: "Install Ruby ${{ matrix.ruby }}"
       uses: "ruby/setup-ruby@v1"
@@ -42,15 +39,10 @@ jobs:
         bundle lock
 
     - name: "Cache Ruby dependencies"
-      uses: "actions/cache@v1"
+      uses: "actions/cache@v4"
       with:
         path: "vendor/bundle"
         key: bundle-${{ hashFiles('Gemfile.lock') }}
-
-    - name: "Install Webdriver"
-      run: |
-        sudo apt-get update
-        sudo apt-get -yqq install chromium-browser
 
     - name: "Run Setup"
       run: |
